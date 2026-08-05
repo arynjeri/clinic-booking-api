@@ -26,8 +26,8 @@ class AppointmentTests(APITestCase):
             phone="0797000000",
         )
 
-        self.create_url = reverse("appointment-create")
-    
+        self.create_url = reverse("appointment-list-create")
+
     def test_create_appointment(self):
         payload = {
             "doctor": self.doctor.id,
@@ -40,20 +40,20 @@ class AppointmentTests(APITestCase):
         response = self.client.post(
             self.create_url,
             payload,
-            format="json"
+            format="json",
         )
 
         self.assertEqual(
             response.status_code,
-            status.HTTP_201_CREATED
+            status.HTTP_201_CREATED,
         )
 
         self.assertEqual(
             Appointment.objects.count(),
-            1
+            1,
         )
-    def test_cannot_book_in_past(self):
 
+    def test_cannot_book_in_past(self):
         payload = {
             "doctor": self.doctor.id,
             "patient": self.patient.id,
@@ -65,16 +65,15 @@ class AppointmentTests(APITestCase):
         response = self.client.post(
             self.create_url,
             payload,
-            format="json"
+            format="json",
         )
 
         self.assertEqual(
             response.status_code,
-            status.HTTP_400_BAD_REQUEST
+            status.HTTP_400_BAD_REQUEST,
         )
 
     def test_duplicate_slot(self):
-
         Appointment.objects.create(
             doctor=self.doctor,
             patient=self.patient,
@@ -95,16 +94,20 @@ class AppointmentTests(APITestCase):
         response = self.client.post(
             self.create_url,
             payload,
-            format="json"
+            format="json",
         )
 
         self.assertEqual(
             response.status_code,
-            status.HTTP_400_BAD_REQUEST
+            status.HTTP_400_BAD_REQUEST,
+        )
+
+        self.assertIn(
+            "already booked",
+            str(response.data).lower(),
         )
 
     def test_cancel_appointment(self):
-
         appointment = Appointment.objects.create(
             doctor=self.doctor,
             patient=self.patient,
@@ -122,7 +125,7 @@ class AppointmentTests(APITestCase):
         response = self.client.patch(
             url,
             {
-                "cancel_reason": "Patient unavailable"
+                "cancel_reason": "Patient unavailable",
             },
             format="json",
         )
@@ -131,15 +134,15 @@ class AppointmentTests(APITestCase):
 
         self.assertEqual(
             response.status_code,
-            status.HTTP_200_OK
+            status.HTTP_200_OK,
         )
 
         self.assertEqual(
             appointment.status,
-            AppointmentStatus.CANCELLED
+            AppointmentStatus.CANCELLED,
         )
-    def test_reschedule(self):
 
+    def test_reschedule(self):
         appointment = Appointment.objects.create(
             doctor=self.doctor,
             patient=self.patient,
@@ -167,10 +170,15 @@ class AppointmentTests(APITestCase):
 
         self.assertEqual(
             response.status_code,
-            status.HTTP_200_OK
+            status.HTTP_200_OK,
         )
 
         self.assertEqual(
             appointment.start_time,
-            time(14, 0)
+            time(14, 0),
+        )
+
+        self.assertEqual(
+            appointment.end_time,
+            time(14, 30),
         )
