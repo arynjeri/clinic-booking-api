@@ -3,9 +3,20 @@ from datetime import datetime
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import generics
+from .models import Doctor
+from .serializers import DoctorSerializer
 
-from .services import AppointmentService
+from appointments.services import AppointmentService
 
+class DoctorListCreateView(generics.ListCreateAPIView):
+    queryset = Doctor.objects.all()
+    serializer_class = DoctorSerializer
+
+
+class DoctorDetailView(generics.RetrieveAPIView):
+    queryset = Doctor.objects.all()
+    serializer_class = DoctorSerializer
 
 class DoctorAvailabilityView(APIView):
 

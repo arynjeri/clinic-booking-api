@@ -5,7 +5,6 @@ from rest_framework.exceptions import ValidationError
 from doctors.models import Doctor
 from .models import Appointment, AppointmentStatus
 
-
 class AppointmentService:
 
     @staticmethod

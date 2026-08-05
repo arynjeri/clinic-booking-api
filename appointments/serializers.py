@@ -11,6 +11,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = "__all__"
+        validators = []
 
     def validate(self, attrs):
         doctor = attrs.get(

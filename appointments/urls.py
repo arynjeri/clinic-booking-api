@@ -1,23 +1,16 @@
 from django.urls import path
 
 from .views import (
-    AppointmentCreateView,
+    AppointmentListCreateView,
     CancelAppointmentView,
-    DoctorAvailabilityView,
     RescheduleAppointmentView,
 )
 
 urlpatterns = [
-    path(
-        "",
-        AppointmentCreateView.as_view(),
-        name="appointment-create",
-    ),
-    path(
-        "<int:pk>/availability/",
-        DoctorAvailabilityView.as_view(),
-        name="doctor-availability",
-    ),
+    path("",
+         AppointmentListCreateView.as_view(),
+         name="appointment-list-create"),
+
 
     path(
         "<int:pk>/cancel/",

@@ -1,7 +1,7 @@
-from django.shortcuts import render
-from jsonschema import ValidationError
+from rest_framework.response import Response
+from django.db.migrations import serializer
+from django.db.models import query
 from rest_framework.views import APIView
-from rest_framework.response import Response, responses
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
@@ -12,29 +12,25 @@ from django.shortcuts import get_object_or_404
 from .models import AppointmentStatus
 from datetime import datetime
 from drf_spectacular.utils import extend_schema
+from rest_framework import generics
 
 @extend_schema(
     request=AppointmentSerializer,
     responses=AppointmentSerializer,
 )
 # Create your views here.
-class AppointmentCreateView(APIView):
+class AppointmentListCreateView(generics.ListCreateAPIView):
+    queryset = Appointment.objects.all()
+    serializer_class = AppointmentSerializer
 
-    def post(self, request):
-
-        serializer = AppointmentSerializer(data=request.data)
-
-        serializer.is_valid(raise_exception=True)
-
-        appointment = AppointmentService.create_appointment(serializer)
-
-        return Response(
-            AppointmentSerializer(appointment).data,
-            status=status.HTTP_201_CREATED
+    def perform_create(self, serializer):
+        AppointmentService.create_appointment(serializer
+                                               )
+    
 @extend_schema(
     request=None,
     responses={200: None},
-)        )
+)        
 class CancelAppointmentView(APIView):
 
     def patch(self, request, pk):

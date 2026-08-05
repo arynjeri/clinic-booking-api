@@ -1,4 +1,5 @@
-from django.db import models
+from django.db import models 
+from django.db.models import Q
 from doctors.models import Doctor
 from patients.models import Patient
 
@@ -41,6 +42,7 @@ class Appointment(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=["doctor", "appointment_date", "start_time"],
+                condition=Q(status=AppointmentStatus.BOOKED),
                 name="unique_doctor_slot",
             )
         ]
