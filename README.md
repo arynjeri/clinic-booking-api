@@ -179,7 +179,7 @@ Custom validators enforce business rules such as:
 
 ---
 
-## Assumptions & Trade-offs
+## Assumptions & Tradeoffs
 
 ### Assumptions
 
